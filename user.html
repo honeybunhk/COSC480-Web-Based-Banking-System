@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard - Global Invest Bank</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffd6e8, #ead7ff, #fff4cc);
+      overflow-x: hidden;
+    }
+
+    .dashboard-card {
+      max-width: 900px;
+      width: 95%;
+    }
+
+    .big-puzzle-box {
+      margin: 25px 0;
+      padding: 25px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 2px solid #f3b6d3;
+      box-shadow: 0 25px 60px rgba(214, 107, 160, 0.25);
+    }
+
+    .puzzle-title {
+      color: #b83280;
+      font-weight: 900;
+      font-size: 26px;
+      margin-bottom: 8px;
+    }
+
+    .puzzle-note {
+      color: #8e2a6a;
+      font-size: 15px;
+      margin-bottom: 18px;
+      font-weight: 600;
+    }
+
+    .puzzle-area {
+      display: flex;
+      gap: 25px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .puzzle-board {
+      width: 420px;
+      height: 420px;
+      display: grid;
+      grid-template-columns: repeat(3, 140px);
+      grid-template-rows: repeat(3, 140px);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 4px solid #f3b6d3;
+      box-shadow: 0 20px 45px rgba(179, 136, 255, 0.3);
+      background: #fff8fc;
+    }
+
+    .puzzle-piece {
+      width: 140px;
+      height: 140px;
+      border: 1px solid rgba(255,255,255,0.8);
+      background-image: url("flower.jpg");
+      background-size: 420px 420px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .puzzle-piece:hover {
+      transform: scale(1.03);
+      z-index: 2;
+      box-shadow: inset 0 0 20px rgba(255,255,255,0.5);
+    }
+
+    .selected-piece {
+      outline: 5px solid #ff4fa3;
+      z-index: 3;
+      transform: scale(1.04);
+    }
+
+    .preview-card {
+      width: 230px;
+      background: #fff0f8;
+      padding: 18px;
+      border-radius: 22px;
+      border: 2px solid #f3b6d3;
+      box-shadow: 0 12px 25px rgba(214, 107, 160, 0.2);
+    }
+
+    .preview-card img {
+      width: 100%;
+      border-radius: 18px;
+      border: 3px solid white;
+    }
+
+    .preview-card p {
+      color: #8e2a6a;
+      font-weight: 700;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    #puzzleStatus {
+      color: #8e2a6a;
+      font-weight: 900;
+      margin: 18px 0;
+      font-size: 17px;
+    }
+
+    .money-section.locked {
+      opacity: 0.35;
+      pointer-events: none;
+      filter: blur(1px);
+    }
+
+    .unlock-badge {
+      display: none;
+      background: #ffe3f1;
+      color: #b83280;
+      padding: 14px;
+      border-radius: 20px;
+      font-weight: 900;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 25px rgba(214, 107, 160, 0.2);
+    }
+
+    .unlock-badge.show {
+      display: block;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 14px;
+      top: -20px;
+      z-index: 9999;
+      animation: fall 3s linear forwards;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
+    .puzzle-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .puzzle-board {
+        width: 300px;
+        height: 300px;
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: repeat(3, 100px);
+      }
+
+      .puzzle-piece {
+        width: 100px;
+        height: 100px;
+        background-size: 300px 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="top-banner">
+  <h1>Global Invest Bank</h1>
+  <p>Your puzzle-protected dashboard</p>
+</header>
+
+<main class="page-center">
+  <div class="card dashboard-card">
+    <h2>Account Overview</h2>
+
+    <p id="savingsLabel" class="balance">Savings: $0.00</p>
+
+    <div class="big-puzzle-box">
+      <p class="puzzle-title">Bank Vault Flower Puzzle</p>
+      <p class="puzzle-note">
+        Click two flower pieces to swap them. Complete the full picture to unlock your money tools.
+      </p>
+
+      <div class="puzzle-area">
+        <div class="puzzle-board" id="puzzleBoard"></div>
+
+        <div class="preview-card">
+          <img src="flower.jpg" alt="Puzzle preview">
+          <p>Preview Image</p>
+        </div>
+      </div>
+
+      <p id="puzzleStatus">Vault is locked</p>
+
+      <div class="puzzle-buttons">
+        <button type="button" onclick="shufflePuzzle()">Shuffle Puzzle</button>
+        <button type="button" onclick="solvePuzzle()">Make Puzzle Easy</button>
+      </div>
+    </div>
+
+    <div id="unlockBadge" class="unlock-badge">
+      Vault unlocked! You can manage your money now. Great job!
+    </div>
+
+    <div id="moneySection" class="money-section locked">
+      <input type="number" id="deposit" placeholder="Deposit amount">
+      <button id="depositBtn">Deposit Money</button>
+
+      <input type="number" id="withdraw" placeholder="Withdraw amount">
+      <button id="withdrawBtn">Withdraw Money</button>
+
+      <hr>
+
+      <button onclick="connectWallet()">Connect MetaMask</button>
+
+      <input type="number" id="metaAmount" placeholder="Amount to add from MetaMask">
+      <button onclick="addMetaMoney()">Add MetaMask Money</button>
+
+      <p id="walletAddress"></p>
+    </div>
+
+    <div class="links">
+      <a href="/logout">Logout</a>
+      <a href="/">Back Home</a>
+    </div>
+  </div>
+</main>
+
+<script src="bankScript.js"></script>
+
+<script>
+  const puzzleBoard = document.getElementById("puzzleBoard");
+  const puzzleStatus = document.getElementById("puzzleStatus");
+  const moneySection = document.getElementById("moneySection");
+  const unlockBadge = document.getElementById("unlockBadge");
+
+  let pieces = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  let selectedIndex = null;
+  let confettiDone = false;
+
+  function drawPuzzle() {
+    puzzleBoard.innerHTML = "";
+
+    pieces.forEach((pieceNumber, currentIndex) => {
+      const piece = document.createElement("div");
+      piece.className = "puzzle-piece";
+
+      const row = Math.floor(pieceNumber / 3);
+      const col = pieceNumber % 3;
+
+      piece.style.backgroundPosition = `-${col * 140}px -${row * 140}px`;
+      piece.onclick = () => selectPiece(currentIndex);
+
+      if (selectedIndex === currentIndex) {
+        piece.classList.add("selected-piece");
+      }
+
+      puzzleBoard.appendChild(piece);
+    });
+
+    checkSolved();
+  }
+
+  function selectPiece(index) {
+    if (selectedIndex === null) {
+      selectedIndex = index;
+    } else {
+      const temp = pieces[selectedIndex];
+      pieces[selectedIndex] = pieces[index];
+      pieces[index] = temp;
+      selectedIndex = null;
+    }
+
+    drawPuzzle();
+  }
+
+  function shufflePuzzle() {
+    pieces = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+
+    for (let i = pieces.length - 1; i > 0; i--) {
+      const randomIndex = Math.floor(Math.random() * (i + 1));
+      const temp = pieces[i];
+      pieces[i] = pieces[randomIndex];
+      pieces[randomIndex] = temp;
+    }
+
+    confettiDone = false;
+    selectedIndex = null;
+    drawPuzzle();
+  }
+
+  function solvePuzzle() {
+    pieces = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    selectedIndex = null;
+    drawPuzzle();
+  }
+
+  function checkSolved() {
+    const solved = pieces.every((piece, index) => piece === index);
+
+    if (solved) {
+      puzzleStatus.innerHTML = "Vault unlocked";
+      moneySection.classList.remove("locked");
+      unlockBadge.classList.add("show");
+
+      if (!confettiDone) {
+        launchConfetti();
+        confettiDone = true;
+      }
+    } else {
+      puzzleStatus.innerHTML = "Vault is locked";
+      moneySection.classList.add("locked");
+      unlockBadge.classList.remove("show");
+    }
+  }
+
+  function launchConfetti() {
+    for (let i = 0; i < 100; i++) {
+      const confetti = document.createElement("div");
+      confetti.className = "confetti";
+
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.backgroundColor = randomColor();
+      confetti.style.animationDelay = Math.random() * 0.8 + "s";
+
+      document.body.appendChild(confetti);
+
+      setTimeout(() => {
+        confetti.remove();
+      }, 3500);
+    }
+  }
+
+  function randomColor() {
+    const colors = ["#ff4fa3", "#b388ff", "#ffd166", "#06d6a0", "#4cc9f0"];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  shufflePuzzle();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Global Invest Bank 💖</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    body {
+      background: linear-gradient(-45deg, #ffd6e8, #e8d7ff, #fff4cc, #ffc0cb);
+      background-size: 400% 400%;
+      animation: gradientMove 12s ease infinite;
+      overflow: hidden;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .floating-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      font-size: 28px;
+      opacity: 0.25;
+    }
+
+    .floating-bg span {
+      position: absolute;
+      animation: floatUp 12s linear infinite;
+    }
+
+    .floating-bg span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .floating-bg span:nth-child(2) { left: 25%; animation-delay: 2s; }
+    .floating-bg span:nth-child(3) { left: 45%; animation-delay: 4s; }
+    .floating-bg span:nth-child(4) { left: 65%; animation-delay: 1s; }
+    .floating-bg span:nth-child(5) { left: 80%; animation-delay: 3s; }
+
+    @keyframes floatUp {
+      0% { bottom: -10%; transform: scale(1) rotate(0deg); }
+      100% { bottom: 110%; transform: scale(1.5) rotate(360deg); }
+    }
+
+    .hero-page {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-card {
+      backdrop-filter: blur(18px);
+      box-shadow: 0 30px 70px rgba(255, 105, 180, 0.35);
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      animation: popIn 1s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .hero-card h1 {
+      font-size: 42px;
+      background: linear-gradient(135deg, #ff4fa3, #9b5cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-card:hover {
+      transform: scale(1.03);
+      transition: 0.3s;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="floating-bg">
+  <span>💖</span>
+  <span>🌸</span>
+  <span>✨</span>
+  <span>💕</span>
+  <span>💅</span>
+</div>
+
+<main class="hero-page">
+  <div class="hero-card">
+    <div class="emoji">💖✨🌸</div>
+
+    <h1>Global Invest Bank</h1>
+    <p class="subtitle">
+      A cute, secure, and stylish banking experience made just for you 💸
+    </p>
+
+    <div class="button-row">
+      <a class="btn primary" href="/login.html">Login 🔐</a>
+      <a class="btn secondary" href="/signup.html">Create Account 🌷</a>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
